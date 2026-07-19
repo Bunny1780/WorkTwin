@@ -14,6 +14,8 @@ load_dotenv()
 class Settings:
     openai_api_key: str | None
     openai_model: str
+    supabase_url: str | None
+    supabase_service_role_key: str | None
 
 
 @lru_cache
@@ -21,5 +23,6 @@ def get_settings() -> Settings:
     return Settings(
         openai_api_key=os.getenv("OPENAI_API_KEY"),
         openai_model=os.getenv("OPENAI_MODEL", "gpt-5.6"),
+        supabase_url=os.getenv("SUPABASE_URL"),
+        supabase_service_role_key=os.getenv("SUPABASE_SERVICE_ROLE_KEY"),
     )
-
