@@ -20,6 +20,13 @@ We strictly use the following stack. Do not introduce alternative frameworks:
 * **Incremental Steps**: Implement one endpoint or one UI component at a time. Never rewrite entire files unless requested.
 * **Security**: Never hardcode OpenAI API Keys or Supabase credentials. Use `.env` files.
 * **Error Handling**: When a Python or React error occurs, analyze the log step-by-step before modifying code.
+* **Git & Commit Protocol**:
+  - Never modify more than 3-5 files or implement more than ONE sub-task from `TODO.md` in a single run.
+  - Automatically create a feature branch (e.g., `feature/phaseX-task-name`) and make a clean, structured commit after successfully completing each sub-task.
+* **Branching Strategy (Git Flow)**:
+  - The `master` (or `main`) branch is STRICTLY reserved for stable production-ready code.
+  - The `develop` branch is our primary active development workspace. All new feature branches (`feature/xxx`) must branch off from `develop` and must be merged back into `develop` upon successful completion.
+  - Never commit directly to `master`.
 
 ## 5. Definition of Done (DoD)
 A task is completed only when:
