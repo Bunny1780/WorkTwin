@@ -132,3 +132,11 @@ npm run dev
 
 The frontend runs on `http://localhost:5173` and proxies `/api` requests to the
 FastAPI server at `http://127.0.0.1:8000`.
+
+### Agent Profiles (Phase 2)
+
+1. In the Supabase SQL Editor, run
+   [`backend/supabase/migrations/001_agent_profiles.sql`](backend/supabase/migrations/001_agent_profiles.sql).
+2. Add the project URL and service-role key to the root `.env` using the names in
+   `.env.example`. The service-role key is only used by FastAPI and must never be
+   exposed in the frontend.
