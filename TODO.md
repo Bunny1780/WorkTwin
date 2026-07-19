@@ -5,6 +5,6 @@
 - [x] Build a basic layout with a sidebar (for agents list) and a main chat area.
 - [x] Connect React frontend to FastAPI backend via fetch/axios.
 
-## Phase 2: Agent Database & Memory (Next)
+## Phase 2: Agent Database & Memory (Current)
 - [ ] Set up Supabase tables for Agent Profiles (Identity, Personality, Role).
-- [ ] Create Python APIs to fetch and update agent configurations.
+- [x] Create Python APIs to fetch and update agent configurations.
