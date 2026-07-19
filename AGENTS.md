@@ -27,6 +27,11 @@ We strictly use the following stack. Do not introduce alternative frameworks:
   - The `master` (or `main`) branch is STRICTLY reserved for stable production-ready code.
   - The `develop` branch is our primary active development workspace. All new feature branches (`feature/xxx`) must branch off from `develop` and must be merged back into `develop` upon successful completion.
   - Never commit directly to `master`.
+* **Automated Pull Request Workflow**:
+  - Every time a sub-task or feature branch is completed, the Agent must automatically push the branch to GitHub (`origin/feature/xxx`).
+  - The Agent must programmatically generate a comprehensive, highly professional English PR description directed at the `develop` branch.
+  - The PR must contain sections for Description, Key Changes, and a DoD Checklist.
+  - Merge the PR only after ensuring the build passes on the branch.
 
 ## 5. Definition of Done (DoD)
 A task is completed only when:
