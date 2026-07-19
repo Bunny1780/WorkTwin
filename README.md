@@ -100,7 +100,7 @@ Each agent contributes from its own expertise before producing a final answer.
 ### Development Setup
 1. Clone the repository.
 2. Install Python dependencies: `pip install -r requirements.txt`
-3. Install Frontend dependencies: `npm install`
+3. Install frontend dependencies: `cd frontend && npm install`
 4. Set up `.env` with `OPENAI_API_KEY` and `SUPABASE_URL`.
 
 ### Backend (Phase 1)
@@ -119,3 +119,16 @@ Set `OPENAI_API_KEY` in the root `.env`, then send a request to `POST /api/chat`
 ```json
 {"message":"Hello, WorkTwin!"}
 ```
+
+### Frontend (Phase 1)
+
+In a second terminal, start the Vite development server:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend runs on `http://localhost:5173` and proxies `/api` requests to the
+FastAPI server at `http://127.0.0.1:8000`.
