@@ -6,7 +6,7 @@
 - [x] Connect React frontend to FastAPI backend via fetch/axios.
 
 ## Phase 2: WorkTwin Foundation — Employee & Artifact Model (Current)
-- [ ] Replace the manual agent-profile model with a tenant-aware employee model: organization, employee, source identity, and lifecycle status (`active` / `departed`).
+- [x] Replace the manual agent-profile model with a tenant-aware employee model: organization, employee, source identity, and lifecycle status (`active` / `departed`).
 - [ ] Create `work_artifacts` for normalized source records with source type, author, timestamp, project/repository context, canonical source URL, content, and access scope.
 - [ ] Define supported MVP artifact types: Slack message/thread, GitHub pull request/review/commit/issue, and email message/thread.
 - [ ] Add an explicitly derived `twin_profiles` model for evidence-based expertise, ownership, working patterns, and last refresh time. It must not be a user-authored personality form.
