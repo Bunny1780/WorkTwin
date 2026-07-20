@@ -5,33 +5,33 @@
 - [x] Build a basic layout with a sidebar (for agents list) and a main chat area.
 - [x] Connect React frontend to FastAPI backend via fetch/axios.
 
-## Phase 2: Agent Profiles & Personalization (Current)
-- [x] Set up Supabase tables for Agent Profiles (Identity, Personality, Role).
-- [x] Create Python APIs to fetch, create, and update agent configurations.
-- [x] Build React UI components for the "Agent Directory Sidebar" and "Create/Edit Agent Panel" to dynamically fetch, create, and update configurations through the FastAPI backend.
-- [x] **[Core Integration]** Implement dynamic System Prompts using the OpenAI SDK in the backend, ensuring each chat session with a specific agent strictly mirrors its distinct communication style (e.g., strict QA Agent vs. timeline-driven PM Agent).
+## Phase 2: WorkTwin Foundation — Employee & Artifact Model (Current)
+- [ ] Replace the manual agent-profile model with a tenant-aware employee model: organization, employee, source identity, and lifecycle status (`active` / `departed`).
+- [ ] Create `work_artifacts` for normalized source records with source type, author, timestamp, project/repository context, canonical source URL, content, and access scope.
+- [ ] Define supported MVP artifact types: Slack message/thread, GitHub pull request/review/commit/issue, and email message/thread.
+- [ ] Add an explicitly derived `twin_profiles` model for evidence-based expertise, ownership, working patterns, and last refresh time. It must not be a user-authored personality form.
+- [ ] Define restricted versus company-shared artifact access, with email treated as a first-class source that can be restricted.
 
-## Phase 3: Organizational Memory & Knowledge Retrieval (Vector Store)
-- [ ] Enable the `pgvector` extension in Supabase and create an `organization_memory` table for text embeddings.
-- [ ] Define a minimal Knowledge Graph model linking agents, documents, projects, and decisions; record relationships alongside organizational memory.
-- [ ] Implement backend endpoint: `POST /api/memory/upload` to ingest text and documents with source metadata (`source_type`, source URL, author, timestamp, project). Support demo imports for PRs/code reviews, technical/design documents, meeting transcripts, Slack/Jira discussions, user feedback, and incident reports.
-- [ ] Utilize OpenAI's `text-embedding-3-small` via the Python SDK to generate embeddings and upsert them into Supabase.
-- [ ] Implement a RAG (Retrieval-Augmented Generation) pipeline: look up historical company context from the vector database before routing queries to the agents and return source citations/snippets with answers.
-- [ ] Document that live GitHub, Slack, Notion, Jira, Google Drive, and internal API connectors are post-MVP; use imported or seeded data for the hackathon demo.
+## Phase 3: Demo Data Ingestion & Organizational Memory
+- [ ] Create repeatable mock-data imports for Slack, GitHub, and email. Each imported record must map source identities to an employee and preserve provenance.
+- [ ] Enable `pgvector` and create `memory_chunks` with an artifact reference, chunk text, embedding, and access scope.
+- [ ] Use OpenAI `text-embedding-3-small` through the official Python SDK to embed imported artifacts and upsert the resulting chunks.
+- [ ] Generate or refresh each employee's derived Twin profile from their linked artifacts.
+- [ ] Seed a coherent demo story that includes at least one departed employee, Slack discussion, GitHub PR, and email decision trail.
 
-## Phase 4: Multi-Agent Collaboration Workflow (The Wow-Factor)
-- [ ] **[Hackathon Hero Feature]** Implement a sequential multi-agent orchestration API:
-  - Pipeline complex user prompts through: PM Agent ➔ Backend Agent ➔ Frontend Agent ➔ QA Agent.
-  - Dynamically chain inputs and outputs so the next agent inherits the cumulative context.
-- [ ] Define the above as the MVP default pipeline; allow other employee-agent roles (such as UI/UX and DevOps) to remain independently usable until dynamic workflow composition is added.
-- [ ] Design a "Live Workflow Visualizer" canvas in React (active nodes light up dynamically as the backend processes, showing status like `PM Agent is drafting specs...`).
+## Phase 4: Evidence-Backed Twin Q&A
+- [ ] Build an Employee/Twin Directory that distinguishes active employees from former employees and does not expose a create/edit personality flow.
+- [ ] Implement a Twin query API that retrieves the selected employee's permitted memories, optionally supplements them with shared organizational memory, and sends grounded context to the OpenAI Chat Completions API.
+- [ ] Return source citations for every substantive Twin answer, including source type, title/context, timestamp, and canonical URL where available.
+- [ ] Clearly label departed-Twin responses as historical, evidence-based representations rather than real-time messages from the former employee.
+- [ ] Build the frontend evidence panel so users can inspect the Slack, GitHub, and email records used in an answer.
 
-## Phase 5: Human-in-the-Loop & Clearances
-- [ ] Define high-risk action policies (production deployment, pull-request approval, confidential-data access, and production-system modification) that require explicit human approval.
-- [ ] Implement an interception mechanism on the backend to pause the multi-agent execution if a decision requires critical clearance, persisting the workflow run and approval status.
-- [ ] Build a polished approval prompt modal in React with explicit `[Approve]` and `[Reject]` actions to resume or halt the workflow.
+## Phase 5: Work Assistance & Guardrails
+- [ ] Add an explicit response mode for implementation plans and code drafts grounded in a selected Twin's historical evidence.
+- [ ] Define policy boundaries: Twins may draft and advise, but deployment, pull-request approval, production changes, and access to restricted artifacts require human approval.
+- [ ] Record the retrieved evidence and requested action with each Twin interaction for auditability.
 
 ## Phase 6: UI Polish & Hackathon Submission Prep
-- [ ] Refine the design using premium UI components (e.g., Shadcn UI primitives) into a high-fidelity dark-themed enterprise dashboard.
-- [ ] Seed the Supabase database with a rich, curated dataset of mock company history for a flawless live demo presentation.
+- [ ] Refine the directory, Twin conversation, citations, and artifact-inspection experience using Shadcn UI primitives.
+- [ ] Document that live Slack, GitHub, and email OAuth/webhook connectors are post-MVP; the demo uses controlled, repeatable imports with the same ingestion contract.
 - [ ] Verify that `npm run build` passes with absolute zero errors and verify environmental variables.
