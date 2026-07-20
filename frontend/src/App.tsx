@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { Send, UserRound } from 'lucide-react'
 
 import { AgentDirectory, agentAvatarColor, agentInitials, type AgentProfile } from './components/agent-directory'
+import { AgentEditor, type AgentProfileInput } from './components/agent-editor'
 import { Button } from './components/ui/button'
 
 type Message = {
@@ -15,6 +16,8 @@ function App() {
   const [selectedAgent, setSelectedAgent] = useState<AgentProfile | null>(null)
   const [isLoadingAgents, setIsLoadingAgents] = useState(true)
   const [agentsError, setAgentsError] = useState<string | null>(null)
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
+  const [editingAgent, setEditingAgent] = useState<AgentProfile | null>(null)
   const [draft, setDraft] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [isSending, setIsSending] = useState(false)
@@ -72,6 +75,34 @@ function App() {
     }
   }
 
+  function openCreateEditor() {
+    setEditingAgent(null)
+    setIsEditorOpen(true)
+  }
+
+  function openEditEditor() {
+    if (!selectedAgent) return
+    setEditingAgent(selectedAgent)
+    setIsEditorOpen(true)
+  }
+
+  async function saveAgent(profile: AgentProfileInput) {
+    const agentId = editingAgent?.id
+    const response = await fetch(agentId ? `/api/agents/${agentId}` : '/api/agents', {
+      method: agentId ? 'PATCH' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(profile),
+    })
+    const payload = (await response.json()) as AgentProfile | { detail?: string }
+    if (!response.ok || !('id' in payload)) {
+      throw new Error('detail' in payload ? payload.detail : 'Unable to save this agent.')
+    }
+    setAgents((current) => (agentId ? current.map((agent) => agent.id === payload.id ? payload : agent) : [...current, payload]))
+    setSelectedAgent(payload)
+    setIsEditorOpen(false)
+    setEditingAgent(null)
+  }
+
   return (
     <main className="flex min-h-screen bg-slate-950 text-slate-100">
       <AgentDirectory
@@ -80,6 +111,7 @@ function App() {
         isLoading={isLoadingAgents}
         error={agentsError}
         onSelect={setSelectedAgent}
+        onCreate={openCreateEditor}
       />
 
       <section className="flex min-w-0 flex-1 flex-col">
@@ -91,6 +123,7 @@ function App() {
             <h2 className="font-semibold">{selectedAgent?.name ?? 'Select an agent'}</h2>
             <p className="text-xs text-emerald-400">{selectedAgent ? `● Available · ${selectedAgent.role}` : 'Load or create an employee agent to begin'}</p>
           </div>
+          {selectedAgent && <Button type="button" variant="ghost" className="ml-auto" onClick={openEditEditor}>Edit profile</Button>}
         </header>
 
         <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-5 py-8 sm:px-8">
@@ -131,6 +164,7 @@ function App() {
           </form>
         </div>
       </section>
+      {isEditorOpen && <AgentEditor agent={editingAgent} onClose={() => setIsEditorOpen(false)} onSave={saveAgent} />}
     </main>
   )
 }

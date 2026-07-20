@@ -1,4 +1,6 @@
-import { Bot, ChevronRight, Sparkles } from 'lucide-react'
+import { Bot, ChevronRight, Plus, Sparkles } from 'lucide-react'
+
+import { Button } from './ui/button'
 
 export type AgentProfile = {
   id: string
@@ -17,6 +19,7 @@ type AgentDirectoryProps = {
   isLoading: boolean
   error: string | null
   onSelect: (agent: AgentProfile) => void
+  onCreate: () => void
 }
 
 const avatarColors = ['bg-violet-500', 'bg-sky-500', 'bg-emerald-500', 'bg-amber-500']
@@ -36,7 +39,7 @@ export function agentAvatarColor(agent: AgentProfile) {
   return avatarColors[value % avatarColors.length]
 }
 
-export function AgentDirectory({ agents, selectedAgentId, isLoading, error, onSelect }: AgentDirectoryProps) {
+export function AgentDirectory({ agents, selectedAgentId, isLoading, error, onSelect, onCreate }: AgentDirectoryProps) {
   return (
     <aside className="hidden w-80 shrink-0 border-r border-slate-800 bg-slate-900/70 p-5 md:flex md:flex-col">
       <div className="mb-9 flex items-center gap-3">
@@ -82,6 +85,9 @@ export function AgentDirectory({ agents, selectedAgentId, isLoading, error, onSe
           )
         })}
       </nav>
+      <Button type="button" variant="ghost" className="mt-4 justify-start gap-2" onClick={onCreate}>
+        <Plus size={16} /> Create agent
+      </Button>
 
       <div className="mt-auto rounded-xl border border-slate-800 bg-slate-900 p-4 text-xs leading-5 text-slate-400">
         <p className="font-medium text-slate-300">Human approval required</p>

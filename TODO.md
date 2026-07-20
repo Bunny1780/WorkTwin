@@ -8,7 +8,7 @@
 ## Phase 2: Agent Profiles & Personalization (Current)
 - [x] Set up Supabase tables for Agent Profiles (Identity, Personality, Role).
 - [x] Create Python APIs to fetch, create, and update agent configurations.
-- [ ] Build React UI components for the "Agent Directory Sidebar" and "Create/Edit Agent Panel" to dynamically fetch, create, and update configurations through the FastAPI backend.
+- [x] Build React UI components for the "Agent Directory Sidebar" and "Create/Edit Agent Panel" to dynamically fetch, create, and update configurations through the FastAPI backend.
 - [x] **[Core Integration]** Implement dynamic System Prompts using the OpenAI SDK in the backend, ensuring each chat session with a specific agent strictly mirrors its distinct communication style (e.g., strict QA Agent vs. timeline-driven PM Agent).
 
 ## Phase 3: Organizational Memory & Knowledge Retrieval (Vector Store)
