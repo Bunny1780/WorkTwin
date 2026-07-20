@@ -34,6 +34,16 @@ class AgentProfileUpdate(BaseModel):
     working_style: dict[str, str] | None = None
 
 
+class AgentProfileCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=120)
+    role: str = Field(min_length=1, max_length=120)
+    department: str = Field(min_length=1, max_length=120)
+    seniority: str = Field(min_length=1, max_length=80)
+    expertise: list[str] = Field(default_factory=list, max_length=30)
+    personality: dict[str, str] = Field(default_factory=dict)
+    working_style: dict[str, str] = Field(default_factory=dict)
+
+
 @dataclass(frozen=True)
 class SupabaseAgentRepository:
     url: str
@@ -57,7 +67,7 @@ class SupabaseAgentRepository:
         try:
             async with httpx.AsyncClient(base_url=self.url, timeout=10.0) as client:
                 headers = self.headers
-                if method == "PATCH":
+                if method in {"POST", "PATCH"}:
                     headers["Prefer"] = "return=representation"
                 response = await client.request(
                     method,
@@ -107,6 +117,15 @@ class SupabaseAgentRepository:
             json=payload,
         )
         return AgentProfile.model_validate(rows[0]) if rows else None
+
+    async def create_profile(self, profile: AgentProfileCreate) -> AgentProfile:
+        rows = await self._request("POST", json=profile.model_dump(mode="json"))
+        if not rows:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="Supabase did not return the created agent profile.",
+            )
+        return AgentProfile.model_validate(rows[0])
 
 
 def get_agents_repository(

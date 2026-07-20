@@ -140,5 +140,7 @@ FastAPI server at `http://127.0.0.1:8000`.
 2. Add the project URL and service-role key to the root `.env` using the names in
    `.env.example`. The service-role key is only used by FastAPI and must never be
    exposed in the frontend.
-3. Start the backend. It exposes `GET /api/agents`, `GET /api/agents/{id}`, and
-   `PATCH /api/agents/{id}` for agent profile configuration.
+3. Start the backend. It exposes `GET /api/agents`, `POST /api/agents`,
+   `GET /api/agents/{id}`, and `PATCH /api/agents/{id}` for agent profile configuration.
+   Send an optional `agent_id` with `POST /api/chat` to apply that agent's profile as
+   the system prompt for the response.
