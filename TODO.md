@@ -32,6 +32,6 @@
 - [x] Record the retrieved evidence and requested action with each Twin interaction for auditability.
 
 ## Phase 6: UI Polish & Hackathon Submission Prep
-- [ ] Refine the directory, Twin conversation, citations, and artifact-inspection experience using Shadcn UI primitives.
-- [ ] Document that live Slack, GitHub, and email OAuth/webhook connectors are post-MVP; the demo uses controlled, repeatable imports with the same ingestion contract.
-- [ ] Verify that `npm run build` passes with absolute zero errors and verify environmental variables.
+- [x] Refine the directory, Twin conversation, citations, and artifact-inspection experience using Shadcn UI primitives.
+- [x] Document that live Slack, GitHub, and email OAuth/webhook connectors are post-MVP; the demo uses controlled, repeatable imports with the same ingestion contract.
+- [x] Verify that `npm run build` passes with absolute zero errors and verify environmental variables.
