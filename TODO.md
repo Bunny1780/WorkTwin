@@ -10,7 +10,7 @@
 - [x] Create `work_artifacts` for normalized source records with source type, author, timestamp, project/repository context, canonical source URL, content, and access scope.
 - [x] Define supported MVP artifact types: Slack message/thread, GitHub pull request/review/commit/issue, and email message/thread.
 - [x] Add an explicitly derived `twin_profiles` model for evidence-based expertise, ownership, working patterns, and last refresh time. It must not be a user-authored personality form.
-- [ ] Define restricted versus company-shared artifact access, with email treated as a first-class source that can be restricted.
+- [x] Define restricted versus company-shared artifact access, with email treated as a first-class source that can be restricted.
 
 ## Phase 3: Demo Data Ingestion & Organizational Memory
 - [ ] Create repeatable mock-data imports for Slack, GitHub, and email. Each imported record must map source identities to an employee and preserve provenance.
