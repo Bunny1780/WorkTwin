@@ -21,6 +21,8 @@ class DemoEmployee:
     role: str
     department: str
     identities: tuple[dict[str, str], ...]
+    employment_status: str = "active"
+    departed_at: str | None = None
 
 
 @dataclass(frozen=True)
@@ -61,24 +63,37 @@ DEMO_EMPLOYEES = (
             {"provider": "email", "external_id": "diego@northstar.example", "email_address": "diego@northstar.example"},
         ),
     ),
+    DemoEmployee(
+        key="priya",
+        display_name="Priya Nair",
+        role="Staff Engineer",
+        department="Engineering",
+        employment_status="departed",
+        departed_at="2025-04-15T17:00:00+00:00",
+        identities=(
+            {"provider": "slack", "external_id": "U-PRIYA", "external_handle": "priya"},
+            {"provider": "github", "external_id": "priya-nair", "external_handle": "priyanair"},
+            {"provider": "email", "external_id": "priya@northstar.example", "email_address": "priya@northstar.example"},
+        ),
+    ),
 )
 DEMO_ARTIFACTS = (
     DemoArtifact(
         source_type="slack_thread",
         source_external_id="slack:C012-launch:1711962000.000100",
         source_uri="https://northstar.slack.com/archives/C012-launch/p1711962000000100",
-        title="Launch channel: retry behavior",
-        content="We should make retries visible in the launch dashboard before enabling the new workflow.",
-        author_identity=("slack", "U-MAYA"),
+        title="Launch channel: retry telemetry proposal",
+        content="Before launch, we should make retry counts and failure reasons visible in the dashboard so support can diagnose workflow issues.",
+        author_identity=("slack", "U-PRIYA"),
         occurred_at="2025-04-01T09:00:00+00:00",
-        source_metadata={"channel_id": "C012-launch", "thread_ts": "1711962000.000100"},
+        source_metadata={"channel_id": "C012-launch", "thread_ts": "1711962000.000100", "topic": "launch telemetry"},
     ),
     DemoArtifact(
         source_type="github_pull_request",
         source_external_id="github:northstar/workflow-api:pr:42",
         source_uri="https://github.com/northstar/workflow-api/pull/42",
         title="Add retry telemetry to workflow runs",
-        content="Adds structured retry events and exposes retry counts to the dashboard API.",
+        content="Implements Priya's launch-telemetry proposal: structured retry events, failure reasons, and retry counts in the dashboard API.",
         author_identity=("github", "druiz"),
         occurred_at="2025-04-02T14:30:00+00:00",
         project_context={"repository": "northstar/workflow-api", "pull_request_number": 42},
@@ -88,12 +103,16 @@ DEMO_ARTIFACTS = (
         source_type="email_thread",
         source_external_id="email:<launch-retries@northstar.example>",
         source_uri="mailto:launch-retries@northstar.example",
-        title="Decision: retry telemetry before launch",
-        content="Decision recorded: launch is approved once retry telemetry is visible to support and product.",
+        title="Decision: require retry telemetry before launch",
+        content="Decision recorded: launch is approved once Diego's PR makes Priya's retry telemetry visible to Support and Product.",
         author_identity=("email", "maya@northstar.example"),
         occurred_at="2025-04-03T08:15:00+00:00",
         access_scope="restricted",
-        source_metadata={"message_id": "<launch-retries@northstar.example>", "to": ["diego@northstar.example"]},
+        source_metadata={
+            "message_id": "<launch-retries@northstar.example>",
+            "to": ["diego@northstar.example", "priya@northstar.example"],
+            "decision": "retry telemetry is a launch criterion",
+        },
     ),
 )
 
@@ -147,6 +166,14 @@ class SupabaseDemoImporter:
         identity_ids: dict[tuple[str, str], str] = {}
 
         for employee in DEMO_EMPLOYEES:
+            employee_payload = {
+                "organization_id": organization["id"],
+                "display_name": employee.display_name,
+                "role": employee.role,
+                "department": employee.department,
+                "employment_status": employee.employment_status,
+                "departed_at": employee.departed_at,
+            }
             rows = await self.request(
                 "GET",
                 "employees",
@@ -164,12 +191,7 @@ class SupabaseDemoImporter:
                     await self.request(
                         "POST",
                         "employees",
-                        json={
-                            "organization_id": organization["id"],
-                            "display_name": employee.display_name,
-                            "role": employee.role,
-                            "department": employee.department,
-                        },
+                        json=employee_payload,
                     )
                 )[0]["id"]
             employee_ids[employee.key] = employee_id

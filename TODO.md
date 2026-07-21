@@ -17,7 +17,7 @@
 - [x] Enable `pgvector` and create `memory_chunks` with an artifact reference, chunk text, embedding, and access scope.
 - [x] Use OpenAI `text-embedding-3-small` through the official Python SDK to embed imported artifacts and upsert the resulting chunks.
 - [x] Generate or refresh each employee's derived Twin profile from their linked artifacts.
-- [ ] Seed a coherent demo story that includes at least one departed employee, Slack discussion, GitHub PR, and email decision trail.
+- [x] Seed a coherent demo story that includes at least one departed employee, Slack discussion, GitHub PR, and email decision trail.
 
 ## Phase 4: Evidence-Backed Twin Q&A
 - [ ] Build an Employee/Twin Directory that distinguishes active employees from former employees and does not expose a create/edit personality flow.

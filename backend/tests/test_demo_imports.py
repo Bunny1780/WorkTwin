@@ -19,6 +19,15 @@ def test_demo_data_covers_all_sources_with_provenance_and_identity_mappings():
     assert all(artifact.author_identity in identities for artifact in DEMO_ARTIFACTS)
     assert all(artifact.source_uri and artifact.source_metadata for artifact in DEMO_ARTIFACTS)
     assert next(artifact for artifact in DEMO_ARTIFACTS if artifact.source_type == "email_thread").access_scope == "restricted"
+    departed_employee = next(employee for employee in DEMO_EMPLOYEES if employee.employment_status == "departed")
+    assert departed_employee.display_name == "Priya Nair"
+    assert departed_employee.departed_at is not None
+    assert next(artifact for artifact in DEMO_ARTIFACTS if artifact.source_type == "slack_thread").author_identity == (
+        "slack",
+        "U-PRIYA",
+    )
+    assert "Priya" in next(artifact for artifact in DEMO_ARTIFACTS if artifact.source_type == "github_pull_request").content
+    assert "Priya" in next(artifact for artifact in DEMO_ARTIFACTS if artifact.source_type == "email_thread").content
 
 
 def test_demo_data_validation_rejects_unknown_access_scope(monkeypatch):
