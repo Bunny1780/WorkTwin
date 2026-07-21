@@ -16,6 +16,7 @@ from app.agents import (
     get_agents_repository,
 )
 from app.config import Settings, get_settings
+from app.twins import SupabaseTwinRepository, TwinDirectoryEntry, get_twin_repository
 
 
 app = FastAPI(title="WorkTwin API", version="0.1.0")
@@ -79,6 +80,14 @@ async def health(settings: Annotated[Settings, Depends(get_settings)]) -> dict[s
         "status": "ok",
         "openai": "configured" if settings.openai_api_key else "not_configured",
     }
+
+
+@app.get("/api/twins", response_model=list[TwinDirectoryEntry])
+async def list_twins(
+    repository: Annotated[SupabaseTwinRepository, Depends(get_twin_repository)],
+) -> list[TwinDirectoryEntry]:
+    """List evidence-backed employee Twins without exposing persona editing."""
+    return await repository.list_directory()
 
 
 @app.post("/api/chat", response_model=ChatResponse)

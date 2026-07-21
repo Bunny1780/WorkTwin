@@ -1,170 +1,58 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { Send, UserRound } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-import { AgentDirectory, agentAvatarColor, agentInitials, type AgentProfile } from './components/agent-directory'
-import { AgentEditor, type AgentProfileInput } from './components/agent-editor'
-import { Button } from './components/ui/button'
-
-type Message = {
-  id: number
-  author: 'user' | 'agent'
-  content: string
-}
+import { TwinDirectory, twinAvatarColor, twinInitials, type TwinDirectoryEntry } from './components/agent-directory'
 
 function App() {
-  const [agents, setAgents] = useState<AgentProfile[]>([])
-  const [selectedAgent, setSelectedAgent] = useState<AgentProfile | null>(null)
-  const [isLoadingAgents, setIsLoadingAgents] = useState(true)
-  const [agentsError, setAgentsError] = useState<string | null>(null)
-  const [isEditorOpen, setIsEditorOpen] = useState(false)
-  const [editingAgent, setEditingAgent] = useState<AgentProfile | null>(null)
-  const [draft, setDraft] = useState('')
-  const [messages, setMessages] = useState<Message[]>([])
-  const [isSending, setIsSending] = useState(false)
+  const [twins, setTwins] = useState<TwinDirectoryEntry[]>([])
+  const [selectedTwin, setSelectedTwin] = useState<TwinDirectoryEntry | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    async function loadAgents() {
+    async function loadTwins() {
       try {
-        const response = await fetch('/api/agents')
-        const payload = (await response.json()) as AgentProfile[] | { detail?: string }
-        if (!response.ok || !Array.isArray(payload)) {
-          throw new Error('detail' in payload ? payload.detail : 'Unable to load employee agents.')
-        }
-        setAgents(payload)
-        setSelectedAgent((current) => current ?? payload[0] ?? null)
+        const response = await fetch('/api/twins')
+        const payload = (await response.json()) as TwinDirectoryEntry[] | { detail?: string }
+        if (!response.ok || !Array.isArray(payload)) throw new Error('detail' in payload ? payload.detail : 'Unable to load employee Twins.')
+        setTwins(payload)
+        setSelectedTwin((current) => current ?? payload[0] ?? null)
       } catch (requestError) {
-        setAgentsError(requestError instanceof Error ? requestError.message : 'Unable to load employee agents.')
+        setError(requestError instanceof Error ? requestError.message : 'Unable to load employee Twins.')
       } finally {
-        setIsLoadingAgents(false)
+        setIsLoading(false)
       }
     }
-
-    void loadAgents()
+    void loadTwins()
   }, [])
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const message = draft.trim()
-    if (!message || isSending || !selectedAgent) return
-
-    const userMessage: Message = { id: Date.now(), author: 'user', content: message }
-    setMessages((current) => [...current, userMessage])
-    setDraft('')
-    setError(null)
-    setIsSending(true)
-
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, agent_id: selectedAgent.id }),
-      })
-      const payload = (await response.json()) as { reply?: string; detail?: string }
-      if (!response.ok || !payload.reply) {
-        throw new Error(payload.detail ?? 'The WorkTwin service could not answer right now.')
-      }
-      setMessages((current) => [
-        ...current,
-        { id: Date.now() + 1, author: 'agent', content: payload.reply! },
-      ])
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Unable to send your message.')
-    } finally {
-      setIsSending(false)
-    }
-  }
-
-  function openCreateEditor() {
-    setEditingAgent(null)
-    setIsEditorOpen(true)
-  }
-
-  function openEditEditor() {
-    if (!selectedAgent) return
-    setEditingAgent(selectedAgent)
-    setIsEditorOpen(true)
-  }
-
-  async function saveAgent(profile: AgentProfileInput) {
-    const agentId = editingAgent?.id
-    const response = await fetch(agentId ? `/api/agents/${agentId}` : '/api/agents', {
-      method: agentId ? 'PATCH' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(profile),
-    })
-    const payload = (await response.json()) as AgentProfile | { detail?: string }
-    if (!response.ok || !('id' in payload)) {
-      throw new Error('detail' in payload ? payload.detail : 'Unable to save this agent.')
-    }
-    setAgents((current) => (agentId ? current.map((agent) => agent.id === payload.id ? payload : agent) : [...current, payload]))
-    setSelectedAgent(payload)
-    setIsEditorOpen(false)
-    setEditingAgent(null)
-  }
-
+  const former = selectedTwin?.employment_status === 'departed'
   return (
     <main className="flex min-h-screen bg-slate-950 text-slate-100">
-      <AgentDirectory
-        agents={agents}
-        selectedAgentId={selectedAgent?.id ?? null}
-        isLoading={isLoadingAgents}
-        error={agentsError}
-        onSelect={setSelectedAgent}
-        onCreate={openCreateEditor}
-      />
-
+      <TwinDirectory twins={twins} selectedTwinId={selectedTwin?.id ?? null} isLoading={isLoading} error={error} onSelect={setSelectedTwin} />
       <section className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center gap-3 border-b border-slate-800 px-5 py-4 sm:px-8">
-          <span className={`grid h-10 w-10 place-items-center rounded-full text-sm font-semibold ${selectedAgent ? agentAvatarColor(selectedAgent) : 'bg-slate-700'}`}>
-            {selectedAgent ? agentInitials(selectedAgent) : '—'}
-          </span>
+          <span className={`grid h-10 w-10 place-items-center rounded-full text-sm font-semibold ${selectedTwin ? twinAvatarColor(selectedTwin) : 'bg-slate-700'}`}>{selectedTwin ? twinInitials(selectedTwin) : '—'}</span>
           <div>
-            <h2 className="font-semibold">{selectedAgent?.name ?? 'Select an agent'}</h2>
-            <p className="text-xs text-emerald-400">{selectedAgent ? `● Available · ${selectedAgent.role}` : 'Load or create an employee agent to begin'}</p>
+            <h2 className="font-semibold">{selectedTwin?.display_name ?? 'Select an employee Twin'}</h2>
+            <p className={`text-xs ${former ? 'text-amber-400' : 'text-emerald-400'}`}>{selectedTwin ? (former ? 'Historical, evidence-based representation' : `Active employee · ${selectedTwin.role}`) : 'Load the employee directory to begin'}</p>
           </div>
-          {selectedAgent && <Button type="button" variant="ghost" className="ml-auto" onClick={openEditEditor}>Edit profile</Button>}
         </header>
-
-        <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-5 py-8 sm:px-8">
-          <div className="flex-1 space-y-6">
-            {messages.map((message) => (
-              <article key={message.id} className={`flex gap-3 ${message.author === 'user' ? 'justify-end' : ''}`}>
-                {message.author === 'agent' && (
-                  <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-semibold ${selectedAgent ? agentAvatarColor(selectedAgent) : 'bg-slate-700'}`}>
-                    {selectedAgent ? agentInitials(selectedAgent) : '—'}
-                  </span>
-                )}
-                <p className={`max-w-[82%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-6 ${
-                  message.author === 'user' ? 'bg-sky-500 text-white' : 'bg-slate-800 text-slate-200'
-                }`}>
-                  {message.content}
-                </p>
-                {message.author === 'user' && <UserRound size={20} className="mt-2 shrink-0 text-slate-500" />}
-              </article>
-            ))}
-          </div>
-
-          <form onSubmit={handleSubmit} className="mt-8">
-            {error && <p role="alert" className="mb-3 rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-300">{error}</p>}
-            <div className="flex items-end gap-3 rounded-2xl border border-slate-700 bg-slate-900 p-2 shadow-xl shadow-black/10 focus-within:border-sky-500">
-              <textarea
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-                placeholder={selectedAgent ? `Ask ${selectedAgent.name.split(' ')[0]} about your work…` : 'Select an employee agent to begin…'}
-                rows={1}
-                className="min-h-11 flex-1 resize-none bg-transparent px-3 py-2 text-sm outline-none placeholder:text-slate-500"
-                disabled={isSending || !selectedAgent}
-              />
-              <Button type="submit" size="icon" aria-label="Send message" disabled={!draft.trim() || isSending || !selectedAgent}>
-                <Send size={17} />
-              </Button>
-            </div>
-            <p className="mt-3 text-center text-xs text-slate-500">WorkTwin responses are suggestions. Verify critical decisions with your team.</p>
-          </form>
+        <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-5 py-8 sm:px-8">
+          {selectedTwin ? (
+            <article className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl shadow-black/10">
+              {former && <p className="mb-5 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">This Twin represents historical work evidence from a former employee. It is not a real-time message from {selectedTwin.display_name}.</p>}
+              <p className="text-sm text-slate-400">{selectedTwin.role} · {selectedTwin.department}</p>
+              <h3 className="mt-6 text-sm font-semibold uppercase tracking-wider text-slate-500">Evidence-derived expertise</h3>
+              <div className="mt-3 flex flex-wrap gap-2">{selectedTwin.expertise.length ? selectedTwin.expertise.map((item) => <span key={item} className="rounded-full bg-sky-500/10 px-3 py-1 text-sm text-sky-200">{item}</span>) : <span className="text-sm text-slate-500">No derived expertise yet.</span>}</div>
+              <dl className="mt-7 grid gap-4 border-t border-slate-800 pt-5 sm:grid-cols-2">
+                <div><dt className="text-xs uppercase tracking-wider text-slate-500">Source artifacts</dt><dd className="mt-1 text-2xl font-semibold">{selectedTwin.source_artifact_count}</dd></div>
+                <div><dt className="text-xs uppercase tracking-wider text-slate-500">Last evidence</dt><dd className="mt-1 text-sm text-slate-300">{selectedTwin.source_last_occurred_at ? new Date(selectedTwin.source_last_occurred_at).toLocaleDateString() : 'Not available'}</dd></div>
+              </dl>
+              <p className="mt-8 rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-sm text-slate-400">Evidence-backed Twin Q&A and source citations will be available in the next step.</p>
+            </article>
+          ) : <p className="text-center text-sm text-slate-500">No employee Twins are available.</p>}
         </div>
       </section>
-      {isEditorOpen && <AgentEditor agent={editingAgent} onClose={() => setIsEditorOpen(false)} onSave={saveAgent} />}
     </main>
   )
 }
