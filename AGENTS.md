@@ -21,8 +21,9 @@ We strictly use the following stack. Do not introduce alternative frameworks:
 * **Security**: Never hardcode OpenAI API Keys or Supabase credentials. Use `.env` files.
 * **Error Handling**: When a Python or React error occurs, analyze the log step-by-step before modifying code.
 * **Git & Commit Protocol**:
-  - Never modify more than 3-5 files or implement more than ONE sub-task from `TODO.md` in a single run.
-  - Automatically create a feature branch (e.g., `feature/phaseX-task-name`) and make a clean, structured commit after successfully completing each sub-task.
+  - A feature branch represents one independently reviewable, cohesive feature. It may include multiple tightly coupled `TODO.md` items, but must not combine unrelated concerns.
+  - Keep commits small and logical (normally 3-5 files per commit). A feature branch may contain multiple structured commits; do not force an entire feature into one commit.
+  - Automatically create a feature branch (e.g., `feature/phaseX-feature-name`) and make clean, structured commits as each logical increment is completed.
 * **Branching Strategy (Git Flow)**:
   - The `master` (or `main`) branch is STRICTLY reserved for stable production-ready code.
   - The `develop` branch is our primary active development workspace. All new feature branches (`feature/xxx`) must branch off from `develop` and must be merged back into `develop` upon successful completion.
@@ -31,10 +32,11 @@ We strictly use the following stack. Do not introduce alternative frameworks:
   - Use local rebase to incorporate `develop` into feature branches; merge pull requests into `develop` on GitHub using merge commits.
   - If rebasing a previously pushed branch requires `git push --force-with-lease`, obtain explicit user approval before running that command.
 * **Automated Pull Request Workflow**:
-  - Every time a sub-task or feature branch is completed, the Agent must automatically push the branch to GitHub (`origin/feature/xxx`).
+  - Every completed cohesive feature branch must be pushed to GitHub (`origin/feature/xxx`).
   - The Agent must programmatically generate a comprehensive, highly professional English PR description directed at the `develop` branch.
   - The PR must contain sections for Description, Key Changes, and a DoD Checklist.
   - Merge the PR only after ensuring the build passes on the branch.
+  - Delete the remote feature branch after a successful merge unless the user explicitly asks to retain it.
 
 ## 5. Definition of Done (DoD)
 A task is completed only when:
