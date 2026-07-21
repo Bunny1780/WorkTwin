@@ -1,3 +1,5 @@
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
+
 export type EvidenceCitation = {
   artifact_id: string
   source_type: string
@@ -13,11 +15,14 @@ type EvidencePanelProps = {
 
 export function EvidencePanel({ citations }: EvidencePanelProps) {
   return (
-    <aside className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-      <h3 className="text-sm font-semibold">Evidence used</h3>
-      <p className="mt-1 text-xs text-slate-500">Inspect the source records grounding the latest answer.</p>
-      {citations.length === 0 ? <p className="mt-5 text-sm text-slate-500">Ask a Twin question to view supporting evidence.</p> : (
-        <ol className="mt-5 space-y-4">
+    <Card role="complementary" aria-label="Evidence used">
+      <CardHeader>
+        <CardTitle>Evidence used</CardTitle>
+        <CardDescription>Inspect the source records grounding the latest answer.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {citations.length === 0 ? <p className="text-sm text-slate-500">Ask a Twin question to view supporting evidence.</p> : (
+        <ol className="space-y-4">
           {citations.map((citation, index) => (
             <li key={`${citation.artifact_id}-${index}`} className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
               <div className="flex items-start justify-between gap-3"><span className="text-xs font-semibold text-sky-300">[{index + 1}] {citation.source_type.replace(/_/g, ' ')}</span><time className="shrink-0 text-xs text-slate-500">{new Date(citation.occurred_at).toLocaleDateString()}</time></div>
@@ -26,7 +31,8 @@ export function EvidencePanel({ citations }: EvidencePanelProps) {
             </li>
           ))}
         </ol>
-      )}
-    </aside>
+        )}
+      </CardContent>
+    </Card>
   )
 }

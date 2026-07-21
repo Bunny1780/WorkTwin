@@ -71,6 +71,18 @@ Twins continuously update from connected or imported work artifacts:
 
 For the hackathon MVP, these sources are represented through curated, repeatable demo imports. Production connectors and webhooks follow the same ingestion contract.
 
+### Demo connector boundary
+
+Live Slack, GitHub, and email OAuth/webhook connectors are post-MVP. The demo uses controlled imports so every run is repeatable while preserving the production ingestion contract: source identity, provenance, timestamps, and access scope are validated before retrieval.
+
+Run the import pipeline locally from `backend/`:
+
+```bash
+.venv/bin/python -m app.demo_imports
+.venv/bin/python -m app.artifact_embeddings
+.venv/bin/python -m app.derived_profiles
+```
+
 ---
 
 ## 💬 Core user experience
@@ -136,6 +148,17 @@ npm run dev
 
 The frontend runs on `http://localhost:5173` and proxies `/api` requests to the
 FastAPI server at `http://127.0.0.1:8000`.
+
+### Verification
+
+Before opening a pull request, run the backend tests and production frontend build:
+
+```bash
+(cd backend && .venv/bin/python -m pytest)
+(cd frontend && npm run build)
+```
+
+The root `.env` must define `OPENAI_API_KEY`, `OPENAI_MODEL`, `SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY`. Keep these values local and never commit the file.
 
 ### MVP status
 
