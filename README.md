@@ -160,6 +160,25 @@ Before opening a pull request, run the backend tests and production frontend bui
 
 The root `.env` must define `OPENAI_API_KEY`, `OPENAI_MODEL`, `SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY`. Keep these values local and never commit the file.
 
+### Hackathon deployment
+
+Deploy the frontend to Vercel and the FastAPI API to Render. Supabase remains the managed database and vector store.
+
+1. In Render, create a new **Blueprint** from this repository. The included [`render.yaml`](render.yaml) creates the `worktwin-api` service from `backend/`.
+2. In that Render service, set `OPENAI_API_KEY`, `OPENAI_MODEL`, `SUPABASE_URL`, and `SUPABASE_SERVICE_ROLE_KEY`. Set `CORS_ORIGINS` after the Vercel URL is known. Keep all of these values server-side.
+3. In Vercel, import the same repository and set **Root Directory** to `frontend`. Add `VITE_API_BASE_URL` with the Render service URL (for example, `https://worktwin-api.onrender.com`), then deploy.
+4. Set Render's `CORS_ORIGINS` to the final Vercel URL (for example, `https://worktwin-demo.vercel.app`) and redeploy the API. Verify `GET /health`, then load the Vercel application.
+
+`VITE_API_BASE_URL` is public by design and must contain only the API URL. Never put OpenAI or Supabase service-role credentials in Vercel or any `VITE_*` variable.
+
+### Stable demo story
+
+1. Open the deployed app and select **Priya Nair** under **Former employees**.
+2. Explain the amber historical-evidence banner, then choose **Load citation-contract story**.
+3. Submit the loaded question in **Implementation plan** mode.
+4. Inspect the response's citations in the evidence panel to show the linked Slack, GitHub, and email records.
+5. Point out that the response is a historical evidence-based representation and that the policy keeps deployment and approval with a human.
+
 ### MVP status
 
 The existing profile-editor and generic-chat prototype is being superseded by the data-driven Work Twin MVP described above. See [`TODO.md`](TODO.md) for the approved implementation sequence. No production Slack, GitHub, or email connector is required for the hackathon demo; the MVP starts with controlled imports that preserve source provenance.
