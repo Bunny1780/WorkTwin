@@ -6,6 +6,7 @@ import { EvidencePanel, type EvidenceCitation } from './components/evidence-pane
 import { Button } from './components/ui/button'
 
 type Message = { id: number; author: 'user' | 'twin'; content: string; historical: boolean }
+type ResponseMode = 'advice' | 'implementation_plan' | 'code_draft'
 
 function App() {
   const [twins, setTwins] = useState<TwinDirectoryEntry[]>([])
@@ -16,6 +17,8 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([])
   const [citations, setCitations] = useState<EvidenceCitation[]>([])
   const [includeCompanyShared, setIncludeCompanyShared] = useState(true)
+  const [responseMode, setResponseMode] = useState<ResponseMode>('advice')
+  const [policy, setPolicy] = useState('Twins may draft and advise, but deployment, pull-request approval, production changes, and access to restricted artifacts require human approval.')
   const [isAsking, setIsAsking] = useState(false)
   const [queryError, setQueryError] = useState<string | null>(null)
 
@@ -47,12 +50,13 @@ function App() {
     try {
       const response = await fetch(`/api/twins/${selectedTwin.id}/query`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: trimmedQuestion, include_company_shared: includeCompanyShared }),
+        body: JSON.stringify({ question: trimmedQuestion, include_company_shared: includeCompanyShared, response_mode: responseMode }),
       })
-      const payload = (await response.json()) as { reply?: string; citations?: EvidenceCitation[]; representation?: string; detail?: string }
+      const payload = (await response.json()) as { reply?: string; citations?: EvidenceCitation[]; representation?: string; response_mode?: ResponseMode; policy?: string; detail?: string }
       if (!response.ok || !payload.reply || !payload.citations || !payload.representation) throw new Error(payload.detail ?? 'The Twin could not answer right now.')
       setMessages((current) => [...current, { id: Date.now() + 1, author: 'twin', content: payload.reply!, historical: payload.representation === 'historical_evidence_based' }])
       setCitations(payload.citations)
+      if (payload.policy) setPolicy(payload.policy)
     } catch (requestError) {
       setQueryError(requestError instanceof Error ? requestError.message : 'Unable to query this Twin.')
     } finally {
@@ -90,8 +94,9 @@ function App() {
               </div>
               <form onSubmit={askTwin} className="mt-7">
                 {queryError && <p role="alert" className="mb-3 rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-300">{queryError}</p>}
-                <label className="mb-3 flex items-center gap-2 text-xs text-slate-400"><input type="checkbox" checked={includeCompanyShared} onChange={(event) => setIncludeCompanyShared(event.target.checked)} className="accent-sky-500" /> Include company-shared organizational memory</label>
+                <div className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-400"><label className="flex items-center gap-2"><input type="checkbox" checked={includeCompanyShared} onChange={(event) => setIncludeCompanyShared(event.target.checked)} className="accent-sky-500" /> Include company-shared organizational memory</label><label className="flex items-center gap-2">Response mode <select value={responseMode} onChange={(event) => setResponseMode(event.target.value as ResponseMode)} className="rounded border border-slate-700 bg-slate-900 px-2 py-1 text-slate-200"><option value="advice">Advice</option><option value="implementation_plan">Implementation plan</option><option value="code_draft">Code draft</option></select></label></div>
                 <div className="flex items-end gap-3 rounded-2xl border border-slate-700 bg-slate-900 p-2 focus-within:border-sky-500"><textarea value={question} onChange={(event) => setQuestion(event.target.value)} placeholder={`Ask ${selectedTwin.display_name.split(' ')[0]} about the available evidence…`} rows={1} disabled={isAsking} className="min-h-11 flex-1 resize-none bg-transparent px-3 py-2 text-sm outline-none placeholder:text-slate-500" /><Button type="submit" size="icon" aria-label="Ask Twin" disabled={!question.trim() || isAsking}><Send size={17} /></Button></div>
+                <p className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs leading-5 text-amber-100">Human approval required: {policy}</p>
               </form>
             </> : <p className="text-center text-sm text-slate-500">No employee Twins are available.</p>}
           </div>
