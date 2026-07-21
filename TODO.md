@@ -35,3 +35,11 @@
 - [x] Refine the directory, Twin conversation, citations, and artifact-inspection experience using Shadcn UI primitives.
 - [x] Document that live Slack, GitHub, and email OAuth/webhook connectors are post-MVP; the demo uses controlled, repeatable imports with the same ingestion contract.
 - [x] Verify that `npm run build` passes with absolute zero errors and verify environmental variables.
+
+## Phase 7: Chat Experience & Distinct Twin Voices
+- [x] Render user and Twin chat responses with safe Markdown support.
+- [x] Constrain the application to the viewport height; make only the conversation area scroll while keeping the prompt composer visible.
+- [x] Submit a prompt with Enter; insert a newline with Shift+Enter.
+- [x] Expand repeatable demo artifacts across Slack, GitHub, and email for each Twin while preserving provenance and access scope.
+- [x] Ground Twin responses in each employee's derived, evidence-backed working patterns and communication summary to produce clearly distinct voices without inventing personality traits.
+- [x] Verify backend tests and frontend production build; mark this phase complete in TODO.

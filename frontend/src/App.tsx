@@ -1,5 +1,6 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { Send, UserRound } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 
 import { TwinDirectory, twinAvatarColor, twinInitials, type TwinDirectoryEntry } from './components/agent-directory'
 import { EvidencePanel, type EvidenceCitation } from './components/evidence-panel'
@@ -71,31 +72,38 @@ function App() {
     setQueryError(null)
   }
 
+  function submitOnEnter(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
+      event.currentTarget.form?.requestSubmit()
+    }
+  }
+
   const former = selectedTwin?.employment_status === 'departed'
   return (
-    <main className="flex min-h-screen bg-slate-950 text-slate-100">
+    <main className="flex h-screen overflow-hidden bg-slate-950 text-slate-100">
       <TwinDirectory twins={twins} selectedTwinId={selectedTwin?.id ?? null} isLoading={isLoading} error={directoryError} onSelect={selectTwin} />
-      <section className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-3 border-b border-slate-800 px-5 py-4 sm:px-8">
+      <section className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <header className="shrink-0 flex items-center gap-3 border-b border-slate-800 px-5 py-4 sm:px-8">
           <span className={`grid h-10 w-10 place-items-center rounded-full text-sm font-semibold ${selectedTwin ? twinAvatarColor(selectedTwin) : 'bg-slate-700'}`}>{selectedTwin ? twinInitials(selectedTwin) : '—'}</span>
           <div><h2 className="font-semibold">{selectedTwin?.display_name ?? 'Select an employee Twin'}</h2><p className={`text-xs ${former ? 'text-amber-400' : 'text-emerald-400'}`}>{selectedTwin ? (former ? 'Historical, evidence-based representation' : `Active employee · ${selectedTwin.role}`) : 'Load the employee directory to begin'}</p></div>
         </header>
-        <div className="mx-auto grid w-full max-w-6xl flex-1 gap-6 px-5 py-8 lg:grid-cols-[minmax(0,1fr)_21rem] sm:px-8">
-          <div className="flex min-w-0 flex-col">
+        <div className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 gap-6 overflow-hidden px-5 py-8 lg:grid-cols-[minmax(0,1fr)_21rem] sm:px-8">
+          <div className="flex min-h-0 min-w-0 flex-col">
             {selectedTwin ? <>
               {former && <p className="mb-5 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">This Twin represents historical work evidence from a former employee. It is not a real-time message from {selectedTwin.display_name}.</p>}
-              <div className="flex-1 space-y-5">{messages.length === 0 && <p className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 text-sm text-slate-400">Ask about decisions, implementation context, or working patterns. Answers are grounded only in permitted organizational evidence.</p>}
+              <div className="min-h-0 flex-1 space-y-5 overflow-y-auto pr-2">{messages.length === 0 && <p className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 text-sm text-slate-400">Ask about decisions, implementation context, or working patterns. Answers are grounded only in permitted organizational evidence.</p>}
                 {messages.map((message) => <article key={message.id} className={`flex gap-3 ${message.author === 'user' ? 'justify-end' : ''}`}>
                   {message.author === 'twin' && <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-semibold ${twinAvatarColor(selectedTwin)}`}>{twinInitials(selectedTwin)}</span>}
-                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6 ${message.author === 'user' ? 'bg-sky-500 text-white' : 'bg-slate-800 text-slate-200'}`}>
-                    {message.historical && <p className="mb-2 text-xs font-semibold text-amber-300">Historical evidence-based representation</p>}{message.content}
+                  <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6 [&_a]:underline [&_code]:rounded [&_code]:bg-black/20 [&_code]:px-1 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-5 [&_p:not(:last-child)]:mb-3 [&_pre]:my-3 [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-black/20 [&_pre]:p-3 [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-5 ${message.author === 'user' ? 'bg-sky-500 text-white' : 'bg-slate-800 text-slate-200'}`}>
+                    {message.historical && <p className="mb-2 text-xs font-semibold text-amber-300">Historical evidence-based representation</p>}<ReactMarkdown>{message.content}</ReactMarkdown>
                   </div>{message.author === 'user' && <UserRound size={20} className="mt-2 shrink-0 text-slate-500" />}
                 </article>)}
               </div>
-              <form onSubmit={askTwin} className="mt-7">
+              <form onSubmit={askTwin} className="mt-5 shrink-0">
                 {queryError && <p role="alert" className="mb-3 rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-300">{queryError}</p>}
                 <div className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-400"><label className="flex items-center gap-2"><input type="checkbox" checked={includeCompanyShared} onChange={(event) => setIncludeCompanyShared(event.target.checked)} className="accent-sky-500" /> Include company-shared organizational memory</label><label className="flex items-center gap-2">Response mode <select value={responseMode} onChange={(event) => setResponseMode(event.target.value as ResponseMode)} className="rounded border border-slate-700 bg-slate-900 px-2 py-1 text-slate-200"><option value="advice">Advice</option><option value="implementation_plan">Implementation plan</option><option value="code_draft">Code draft</option></select></label></div>
-                <div className="flex items-end gap-3 rounded-2xl border border-slate-700 bg-slate-900 p-2 focus-within:border-sky-500"><textarea value={question} onChange={(event) => setQuestion(event.target.value)} placeholder={`Ask ${selectedTwin.display_name.split(' ')[0]} about the available evidence…`} rows={1} disabled={isAsking} className="min-h-11 flex-1 resize-none bg-transparent px-3 py-2 text-sm outline-none placeholder:text-slate-500" /><Button type="submit" size="icon" aria-label="Ask Twin" disabled={!question.trim() || isAsking}><Send size={17} /></Button></div>
+                <div className="flex items-end gap-3 rounded-2xl border border-slate-700 bg-slate-900 p-2 focus-within:border-sky-500"><textarea value={question} onChange={(event) => setQuestion(event.target.value)} onKeyDown={submitOnEnter} placeholder={`Ask ${selectedTwin.display_name.split(' ')[0]} about the available evidence…`} rows={1} disabled={isAsking} className="min-h-11 max-h-36 flex-1 resize-y bg-transparent px-3 py-2 text-sm outline-none placeholder:text-slate-500" /><Button type="submit" size="icon" aria-label="Ask Twin" disabled={!question.trim() || isAsking}><Send size={17} /></Button></div>
                 <p className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs leading-5 text-amber-100">Human approval required: {policy}</p>
               </form>
             </> : <p className="text-center text-sm text-slate-500">No employee Twins are available.</p>}
