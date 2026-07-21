@@ -8,6 +8,7 @@ import { Button } from './components/ui/button'
 
 type Message = { id: number; author: 'user' | 'twin'; content: string; historical: boolean }
 type ResponseMode = 'advice' | 'implementation_plan' | 'code_draft'
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, '') ?? ''
 
 function App() {
   const [twins, setTwins] = useState<TwinDirectoryEntry[]>([])
@@ -26,7 +27,7 @@ function App() {
   useEffect(() => {
     async function loadTwins() {
       try {
-        const response = await fetch('/api/twins')
+        const response = await fetch(`${apiBaseUrl}/api/twins`)
         const payload = (await response.json()) as TwinDirectoryEntry[] | { detail?: string }
         if (!response.ok || !Array.isArray(payload)) throw new Error('detail' in payload ? payload.detail : 'Unable to load employee Twins.')
         setTwins(payload)
@@ -49,7 +50,7 @@ function App() {
     setQueryError(null)
     setIsAsking(true)
     try {
-      const response = await fetch(`/api/twins/${selectedTwin.id}/query`, {
+      const response = await fetch(`${apiBaseUrl}/api/twins/${selectedTwin.id}/query`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: trimmedQuestion, include_company_shared: includeCompanyShared, response_mode: responseMode }),
       })
@@ -72,6 +73,11 @@ function App() {
     setQueryError(null)
   }
 
+  function loadCitationDemo() {
+    setQuestion('Why must every Twin answer include citations? Give me an implementation plan for enforcing that contract.')
+    setResponseMode('implementation_plan')
+  }
+
   function submitOnEnter(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
@@ -92,6 +98,7 @@ function App() {
           <div className="flex min-h-0 min-w-0 flex-col">
             {selectedTwin ? <>
               {former && <p className="mb-5 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">This Twin represents historical work evidence from a former employee. It is not a real-time message from {selectedTwin.display_name}.</p>}
+              {former && messages.length === 0 && <div className="mb-5 rounded-lg border border-sky-500/20 bg-sky-500/10 p-4"><p className="text-sm font-medium text-sky-100">Hackathon demo prompt</p><p className="mt-1 text-sm text-slate-300">Show how a departed engineer's historical rationale becomes a cited implementation plan.</p><Button type="button" variant="ghost" className="mt-3 h-8 border border-sky-400/30 px-3 text-xs" onClick={loadCitationDemo}>Load citation-contract story</Button></div>}
               <div className="min-h-0 flex-1 space-y-5 overflow-y-auto pr-2">{messages.length === 0 && <p className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 text-sm text-slate-400">Ask about decisions, implementation context, or working patterns. Answers are grounded only in permitted organizational evidence.</p>}
                 {messages.map((message) => <article key={message.id} className={`flex gap-3 ${message.author === 'user' ? 'justify-end' : ''}`}>
                   {message.author === 'twin' && <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-semibold ${twinAvatarColor(selectedTwin)}`}>{twinInitials(selectedTwin)}</span>}

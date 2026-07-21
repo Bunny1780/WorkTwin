@@ -26,11 +26,12 @@ from app.twin_queries import (
 )
 
 
+settings = get_settings()
 app = FastAPI(title="WorkTwin API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=list(settings.cors_origins),
     allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH"],
     allow_headers=["Content-Type"],
