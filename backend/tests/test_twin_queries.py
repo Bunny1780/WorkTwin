@@ -13,6 +13,14 @@ class FakeRepository:
     async def get_employee(self, employee_id):
         return {"id": str(employee_id), "display_name": "Priya Nair", "employment_status": "departed"}
 
+    async def get_profile(self, employee_id):
+        return {
+            "expertise": ["evidence retrieval"],
+            "ownership": ["citation contract"],
+            "working_patterns": {"decision-making": "prioritizes inspectable evidence"},
+            "communication_summary": "Direct and precise about trust boundaries.",
+        }
+
     async def match_memories(self, query_embedding, employee_id, include_company_shared):
         assert len(query_embedding) == EMBEDDING_DIMENSIONS
         assert include_company_shared is True
@@ -64,6 +72,7 @@ def test_twin_query_grounds_a_historical_answer_and_returns_citations():
     assert FakeEmbeddings.last_request == {"model": EMBEDDING_MODEL, "input": ["What was required before launch?"]}
     assert FakeCompletions.last_request["model"] == "test-model"
     assert "historical evidence-based representation" in FakeCompletions.last_request["messages"][0]["content"]
+    assert "Direct and precise about trust boundaries" in FakeCompletions.last_request["messages"][0]["content"]
     assert response.representation == "historical_evidence_based"
     assert response.response_mode == "implementation_plan"
     assert response.human_approval_required is True

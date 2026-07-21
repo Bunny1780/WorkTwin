@@ -48,6 +48,8 @@ class TwinQueryResponse(BaseModel):
 class TwinQueryRepository(Protocol):
     async def get_employee(self, employee_id: UUID) -> dict[str, Any] | None: ...
 
+    async def get_profile(self, employee_id: UUID) -> dict[str, Any] | None: ...
+
     async def match_memories(
         self, query_embedding: list[float], employee_id: UUID, include_company_shared: bool
     ) -> list[dict[str, Any]]: ...
@@ -85,6 +87,18 @@ class SupabaseTwinQueryRepository:
             params={
                 "select": "id,display_name,role,department,employment_status",
                 "id": f"eq.{employee_id}",
+                "limit": "1",
+            },
+        )
+        return rows[0] if rows else None
+
+    async def get_profile(self, employee_id: UUID) -> dict[str, Any] | None:
+        rows = await self.request(
+            "GET",
+            "/rest/v1/twin_profiles",
+            params={
+                "select": "expertise,ownership,working_patterns,communication_summary",
+                "employee_id": f"eq.{employee_id}",
                 "limit": "1",
             },
         )
@@ -129,6 +143,7 @@ class TwinQueryService:
         employee = await self.repository.get_employee(employee_id)
         if employee is None:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Employee Twin not found.")
+        profile = await self.repository.get_profile(employee_id)
         embedding_response = await self.client.embeddings.create(model=EMBEDDING_MODEL, input=[request.question])
         query_embedding = embedding_response.data[0].embedding
         if len(query_embedding) != EMBEDDING_DIMENSIONS:
@@ -165,8 +180,18 @@ class TwinQueryService:
         system_message = (
             "Answer only from the supplied organizational evidence. State uncertainty when evidence is incomplete. "
             "Cite every substantive claim using the supplied bracketed evidence numbers. "
-            "Do not claim personal experiences or present-day knowledge beyond the evidence."
+            "Do not claim personal experiences or present-day knowledge beyond the evidence. "
+            "Use the documented communication summary and working patterns to shape organization, level of detail, "
+            "and tone, but do not exaggerate them into a fictional persona or invent traits."
         )
+        if profile:
+            voice_context = {
+                "expertise": profile.get("expertise", []),
+                "ownership": profile.get("ownership", []),
+                "working_patterns": profile.get("working_patterns", {}),
+                "communication_summary": profile.get("communication_summary"),
+            }
+            system_message += f" Documented Twin profile: {voice_context}."
         if request.response_mode == "implementation_plan":
             system_message += " Provide an implementation plan, not an executed change."
         elif request.response_mode == "code_draft":

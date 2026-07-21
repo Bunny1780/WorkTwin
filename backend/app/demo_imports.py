@@ -114,6 +114,120 @@ DEMO_ARTIFACTS = (
             "decision": "retry telemetry is a launch criterion",
         },
     ),
+    DemoArtifact(
+        source_type="slack_message",
+        source_external_id="slack:C024-discovery:1712048400.000200",
+        source_uri="https://northstar.slack.com/archives/C024-discovery/p1712048400000200",
+        title="Discovery channel: activation metric question",
+        content="I want the activation definition written before we instrument it: a workspace has connected a source, invited a teammate, and viewed its first evidence-backed answer. Otherwise we will optimize a vague number.",
+        author_identity=("slack", "U-MAYA"),
+        occurred_at="2025-04-02T09:00:00+00:00",
+        source_metadata={"channel_id": "C024-discovery", "topic": "activation metric"},
+    ),
+    DemoArtifact(
+        source_type="github_issue",
+        source_external_id="github:northstar/worktwin-web:issue:18",
+        source_uri="https://github.com/northstar/worktwin-web/issues/18",
+        title="Define activation funnel events",
+        content="Maya's acceptance criteria: name each event, state its user value, and include a dashboard query. Do not add events merely because they are easy to emit.",
+        author_identity=("github", "maya-chen"),
+        occurred_at="2025-04-04T10:20:00+00:00",
+        project_context={"repository": "northstar/worktwin-web", "issue_number": 18},
+        source_metadata={"issue_number": 18, "labels": ["product", "analytics"]},
+    ),
+    DemoArtifact(
+        source_type="email_message",
+        source_external_id="email:<activation-review@northstar.example>",
+        source_uri="mailto:activation-review@northstar.example",
+        title="Activation review: defer the vanity dashboard",
+        content="Decision: ship the three activation events first and defer the executive dashboard. The goal is to learn where users stop, not to create a polished report before the data is trustworthy.",
+        author_identity=("email", "maya@northstar.example"),
+        occurred_at="2025-04-07T16:00:00+00:00",
+        source_metadata={"message_id": "<activation-review@northstar.example>", "decision": "defer vanity dashboard"},
+    ),
+    DemoArtifact(
+        source_type="slack_thread",
+        source_external_id="slack:C031-platform:1712134800.000300",
+        source_uri="https://northstar.slack.com/archives/C031-platform/p1712134800000300",
+        title="Platform channel: import idempotency",
+        content="The importer must treat source IDs as the durable key. A retry should converge on the same record; adding a client-side dedupe cache only hides the real contract.",
+        author_identity=("slack", "U-DIEGO"),
+        occurred_at="2025-04-03T11:00:00+00:00",
+        source_metadata={"channel_id": "C031-platform", "topic": "idempotent imports"},
+    ),
+    DemoArtifact(
+        source_type="github_review",
+        source_external_id="github:northstar/workflow-api:pr:47:review:1",
+        source_uri="https://github.com/northstar/workflow-api/pull/47#pullrequestreview-1",
+        title="Review: preserve source identity on retries",
+        content="Diego requested an upsert on organization, source type, and external ID, plus a regression test for replaying the same event. He rejected a timestamp-based duplicate heuristic as unsafe.",
+        author_identity=("github", "druiz"),
+        occurred_at="2025-04-05T13:40:00+00:00",
+        project_context={"repository": "northstar/workflow-api", "pull_request_number": 47},
+        source_metadata={"pull_request_number": 47, "state": "approved"},
+    ),
+    DemoArtifact(
+        source_type="email_message",
+        source_external_id="email:<import-slo@northstar.example>",
+        source_uri="mailto:import-slo@northstar.example",
+        title="Importer SLO and rollback notes",
+        content="Diego documented the rollout gate: measure failed imports by provider, alert on sustained errors, and keep the previous importer path available until replay tests pass in production-like data.",
+        author_identity=("email", "diego@northstar.example"),
+        occurred_at="2025-04-08T15:10:00+00:00",
+        source_metadata={"message_id": "<import-slo@northstar.example>", "topic": "reliability"},
+    ),
+    DemoArtifact(
+        source_type="slack_message",
+        source_external_id="slack:C031-platform:1712221200.000400",
+        source_uri="https://northstar.slack.com/archives/C031-platform/p1712221200000400",
+        title="Platform channel: failure-mode checklist",
+        content="Before merging, list the failure mode, the observable signal, and the recovery path. If we cannot explain how an operator notices it, the feature is not ready.",
+        author_identity=("slack", "U-DIEGO"),
+        occurred_at="2025-04-04T12:00:00+00:00",
+        source_metadata={"channel_id": "C031-platform", "topic": "operational readiness"},
+    ),
+    DemoArtifact(
+        source_type="github_commit",
+        source_external_id="github:northstar/memory-worker:commit:9f5c1a2",
+        source_uri="https://github.com/northstar/memory-worker/commit/9f5c1a2",
+        title="Chunk imports by decision boundary",
+        content="Priya split long source records at decision boundaries and retained surrounding context. Her commit notes that retrieval quality suffers when a chunk mixes rationale, implementation, and a later status update.",
+        author_identity=("github", "priya-nair"),
+        occurred_at="2025-03-25T10:35:00+00:00",
+        project_context={"repository": "northstar/memory-worker", "commit_sha": "9f5c1a2"},
+        source_metadata={"commit_sha": "9f5c1a2"},
+    ),
+    DemoArtifact(
+        source_type="email_thread",
+        source_external_id="email:<citation-contract@northstar.example>",
+        source_uri="mailto:citation-contract@northstar.example",
+        title="Citation contract for Twin answers",
+        content="Priya's proposal: every substantive answer should return the source type, timestamp, excerpt, and canonical URL. A confident answer without a source is a product defect, not a UX detail.",
+        author_identity=("email", "priya@northstar.example"),
+        occurred_at="2025-03-28T14:00:00+00:00",
+        source_metadata={"message_id": "<citation-contract@northstar.example>", "topic": "evidence UX"},
+    ),
+    DemoArtifact(
+        source_type="slack_thread",
+        source_external_id="slack:C042-trust:1711702800.000500",
+        source_uri="https://northstar.slack.com/archives/C042-trust/p1711702800000500",
+        title="Trust channel: restricted email handling",
+        content="Restricted email must not become retrievable merely because a related Slack thread is shared. Priya asked for scope enforcement in retrieval, not a warning after the model has already seen the content.",
+        author_identity=("slack", "U-PRIYA"),
+        occurred_at="2025-03-29T08:20:00+00:00",
+        source_metadata={"channel_id": "C042-trust", "topic": "access scope"},
+    ),
+    DemoArtifact(
+        source_type="github_pull_request",
+        source_external_id="github:northstar/memory-worker:pr:31",
+        source_uri="https://github.com/northstar/memory-worker/pull/31",
+        title="Return citations with retrieval results",
+        content="Priya implemented evidence citations alongside memory matches and added cases for missing URLs. The PR prioritizes an inspectable evidence trail over a more conversational but opaque response.",
+        author_identity=("github", "priya-nair"),
+        occurred_at="2025-04-01T16:45:00+00:00",
+        project_context={"repository": "northstar/memory-worker", "pull_request_number": 31},
+        source_metadata={"pull_request_number": 31, "state": "merged"},
+    ),
 )
 
 
@@ -137,6 +251,15 @@ def validate_demo_data() -> None:
         datetime.fromisoformat(artifact.occurred_at)
     if artifact_providers != PROVIDERS:
         raise ValueError("Demo import must include Slack, GitHub, and email artifacts.")
+    artifacts_by_employee = {
+        employee.key: sum(
+            artifact.author_identity in {(identity["provider"], identity["external_id"]) for identity in employee.identities}
+            for artifact in DEMO_ARTIFACTS
+        )
+        for employee in DEMO_EMPLOYEES
+    }
+    if any(count < 4 for count in artifacts_by_employee.values()):
+        raise ValueError("Each demo employee must have enough artifacts to establish a distinct evidence-backed voice.")
 
 
 class SupabaseDemoImporter:
