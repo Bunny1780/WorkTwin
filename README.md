@@ -8,6 +8,16 @@
 
 Watch the 90-second product demo: [WorkTwin on YouTube](https://youtu.be/1_yStyEEEJU)
 
+## 🤖 Built with OpenAI
+
+### Codex
+
+Codex was our hands-on development partner throughout the hackathon. It helped implement and iterate on the React/Vite experience, FastAPI retrieval layer, Supabase schema and ingestion pipelines, test coverage, deployment configuration, and the final demo polish. Codex also drove the disciplined Git workflow: focused feature branches, verification, pull requests, and production deployment checks.
+
+### GPT-5.6 and the OpenAI API
+
+WorkTwin uses the official OpenAI Python SDK and GPT-5.6 through the Chat Completions API to turn retrieved, permitted organizational evidence into grounded Twin answers, implementation plans, and code drafts. Every substantive response is instructed to cite the supplied evidence and to respect the historical-Twin and human-approval guardrails. `text-embedding-3-small` creates the vector embeddings used to retrieve relevant Slack, GitHub, and email artifacts before GPT-5.6 responds.
+
 ## 🌟 Vision
 
 Organizations lose valuable knowledge every time an employee changes roles or leaves the company.
