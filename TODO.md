@@ -21,10 +21,10 @@
 
 ## Phase 4: Evidence-Backed Twin Q&A
 - [x] Build an Employee/Twin Directory that distinguishes active employees from former employees and does not expose a create/edit personality flow.
-- [ ] Implement a Twin query API that retrieves the selected employee's permitted memories, optionally supplements them with shared organizational memory, and sends grounded context to the OpenAI Chat Completions API.
-- [ ] Return source citations for every substantive Twin answer, including source type, title/context, timestamp, and canonical URL where available.
-- [ ] Clearly label departed-Twin responses as historical, evidence-based representations rather than real-time messages from the former employee.
-- [ ] Build the frontend evidence panel so users can inspect the Slack, GitHub, and email records used in an answer.
+- [x] Implement a Twin query API that retrieves the selected employee's permitted memories, optionally supplements them with shared organizational memory, and sends grounded context to the OpenAI Chat Completions API.
+- [x] Return source citations for every substantive Twin answer, including source type, title/context, timestamp, and canonical URL where available.
+- [x] Clearly label departed-Twin responses as historical, evidence-based representations rather than real-time messages from the former employee.
+- [x] Build the frontend evidence panel so users can inspect the Slack, GitHub, and email records used in an answer.
 
 ## Phase 5: Work Assistance & Guardrails
 - [ ] Add an explicit response mode for implementation plans and code drafts grounded in a selected Twin's historical evidence.
