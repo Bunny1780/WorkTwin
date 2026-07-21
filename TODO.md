@@ -13,7 +13,7 @@
 - [x] Define restricted versus company-shared artifact access, with email treated as a first-class source that can be restricted.
 
 ## Phase 3: Demo Data Ingestion & Organizational Memory
-- [ ] Create repeatable mock-data imports for Slack, GitHub, and email. Each imported record must map source identities to an employee and preserve provenance.
+- [x] Create repeatable mock-data imports for Slack, GitHub, and email. Each imported record must map source identities to an employee and preserve provenance.
 - [ ] Enable `pgvector` and create `memory_chunks` with an artifact reference, chunk text, embedding, and access scope.
 - [ ] Use OpenAI `text-embedding-3-small` through the official Python SDK to embed imported artifacts and upsert the resulting chunks.
 - [ ] Generate or refresh each employee's derived Twin profile from their linked artifacts.
