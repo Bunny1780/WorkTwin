@@ -159,7 +159,7 @@ export function TwinDirectory({ twins, selectedTwinId, isLoading, error, onSelec
       {isLoading && <p className="px-3 py-2 text-sm text-slate-500">Loading Twins…</p>}
       {error && <p role="alert" className="rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-300">{error}</p>}
       {!isLoading && !error && (
-        <nav className="space-y-5" aria-label="Employee Twins">
+        <nav className="min-h-0 flex-1 space-y-5 overflow-y-auto" aria-label="Employee Twins">
           <section>
             <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-slate-500">Active employees</p>
             <div className="space-y-1">{activeTwins.map(renderTwin)}</div>
