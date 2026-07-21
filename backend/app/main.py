@@ -17,6 +17,13 @@ from app.agents import (
 )
 from app.config import Settings, get_settings
 from app.twins import SupabaseTwinRepository, TwinDirectoryEntry, get_twin_repository
+from app.twin_queries import (
+    SupabaseTwinQueryRepository,
+    TwinQueryRequest,
+    TwinQueryResponse,
+    TwinQueryService,
+    get_twin_query_repository,
+)
 
 
 app = FastAPI(title="WorkTwin API", version="0.1.0")
@@ -88,6 +95,18 @@ async def list_twins(
 ) -> list[TwinDirectoryEntry]:
     """List evidence-backed employee Twins without exposing persona editing."""
     return await repository.list_directory()
+
+
+@app.post("/api/twins/{employee_id}/query", response_model=TwinQueryResponse)
+async def query_twin(
+    employee_id: UUID,
+    request: TwinQueryRequest,
+    settings: Annotated[Settings, Depends(get_settings)],
+    client: Annotated[AsyncOpenAI, Depends(get_openai_client)],
+    repository: Annotated[SupabaseTwinQueryRepository, Depends(get_twin_query_repository)],
+) -> TwinQueryResponse:
+    """Answer from permitted evidence and return the source records used."""
+    return await TwinQueryService(repository, client, settings.openai_model).answer(employee_id, request)
 
 
 @app.post("/api/chat", response_model=ChatResponse)
