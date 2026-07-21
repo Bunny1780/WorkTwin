@@ -1,9 +1,10 @@
 import { useEffect, useState, type FormEvent, type KeyboardEvent } from 'react'
-import { Send, UserRound } from 'lucide-react'
+import { Database, Send, UserRound } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 
 import { TwinDirectory, twinAvatarColor, twinInitials, type TwinDirectoryEntry } from './components/agent-directory'
 import { EvidencePanel, type EvidenceCitation } from './components/evidence-panel'
+import { DataSourceOnboarding } from './components/data-source-onboarding'
 import { Button } from './components/ui/button'
 
 type Message = { id: number; author: 'user' | 'twin'; content: string; historical: boolean }
@@ -23,6 +24,7 @@ function App() {
   const [policy, setPolicy] = useState('Twins may draft and advise, but deployment, pull-request approval, production changes, and access to restricted artifacts require human approval.')
   const [isAsking, setIsAsking] = useState(false)
   const [queryError, setQueryError] = useState<string | null>(null)
+  const [isDataSourcesOpen, setIsDataSourcesOpen] = useState(false)
 
   useEffect(() => {
     async function loadTwins() {
@@ -90,9 +92,10 @@ function App() {
     <main className="flex h-screen overflow-hidden bg-slate-950 text-slate-100">
       <TwinDirectory twins={twins} selectedTwinId={selectedTwin?.id ?? null} isLoading={isLoading} error={directoryError} onSelect={selectTwin} />
       <section className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <header className="shrink-0 flex items-center gap-3 border-b border-slate-800 px-5 py-4 sm:px-8">
-          <span className={`grid h-10 w-10 place-items-center rounded-full text-sm font-semibold ${selectedTwin ? twinAvatarColor(selectedTwin) : 'bg-slate-700'}`}>{selectedTwin ? twinInitials(selectedTwin) : '—'}</span>
-          <div><h2 className="font-semibold">{selectedTwin?.display_name ?? 'Select an employee Twin'}</h2><p className={`text-xs ${former ? 'text-amber-400' : 'text-emerald-400'}`}>{selectedTwin ? (former ? 'Historical, evidence-based representation' : `Active employee · ${selectedTwin.role}`) : 'Load the employee directory to begin'}</p></div>
+        <header className="shrink-0 flex items-center justify-between gap-3 border-b border-slate-800 px-5 py-4 sm:px-8">
+          <div className="flex min-w-0 items-center gap-3"><span className={`grid h-10 w-10 shrink-0 place-items-center rounded-full text-sm font-semibold ${selectedTwin ? twinAvatarColor(selectedTwin) : 'bg-slate-700'}`}>{selectedTwin ? twinInitials(selectedTwin) : '—'}</span>
+            <div className="min-w-0"><h2 className="truncate font-semibold">{selectedTwin?.display_name ?? 'Select an employee Twin'}</h2><p className={`truncate text-xs ${former ? 'text-amber-400' : 'text-emerald-400'}`}>{selectedTwin ? (former ? 'Historical, evidence-based representation' : `Active employee · ${selectedTwin.role}`) : 'Load the employee directory to begin'}</p></div></div>
+          <Button type="button" variant="ghost" className="shrink-0 gap-2 border border-slate-700 px-3 text-xs" onClick={() => setIsDataSourcesOpen(true)}><Database size={15} /> Data sources</Button>
         </header>
         <div className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 gap-6 overflow-hidden px-5 py-8 lg:grid-cols-[minmax(0,1fr)_21rem] sm:px-8">
           <div className="flex min-h-0 min-w-0 flex-col">
@@ -118,6 +121,7 @@ function App() {
           <EvidencePanel citations={citations} />
         </div>
       </section>
+      {isDataSourcesOpen && <DataSourceOnboarding onClose={() => setIsDataSourcesOpen(false)} />}
     </main>
   )
 }

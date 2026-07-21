@@ -47,6 +47,6 @@
 ## Phase 8: Hackathon Demo Delivery
 - [x] Deploy a publicly accessible Vercel frontend and Render FastAPI API with production environment configuration.
 - [x] Prepare and verify a stable end-to-end demo story: departed Twin, cited evidence, and implementation plan.
-- [ ] Add a demo data-source/onboarding view explaining the planned Slack, GitHub, and email OAuth/webhook connection flow.
+- [x] Add a demo data-source/onboarding view explaining the planned Slack, GitHub, and email OAuth/webhook connection flow.
 - [ ] Create submission-ready README materials, screenshots, and a short backup demo recording.
 - [x] Run final backend tests, frontend production build, and deployed smoke tests.
