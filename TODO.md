@@ -27,9 +27,9 @@
 - [x] Build the frontend evidence panel so users can inspect the Slack, GitHub, and email records used in an answer.
 
 ## Phase 5: Work Assistance & Guardrails
-- [ ] Add an explicit response mode for implementation plans and code drafts grounded in a selected Twin's historical evidence.
-- [ ] Define policy boundaries: Twins may draft and advise, but deployment, pull-request approval, production changes, and access to restricted artifacts require human approval.
-- [ ] Record the retrieved evidence and requested action with each Twin interaction for auditability.
+- [x] Add an explicit response mode for implementation plans and code drafts grounded in a selected Twin's historical evidence.
+- [x] Define policy boundaries: Twins may draft and advise, but deployment, pull-request approval, production changes, and access to restricted artifacts require human approval.
+- [x] Record the retrieved evidence and requested action with each Twin interaction for auditability.
 
 ## Phase 6: UI Polish & Hackathon Submission Prep
 - [ ] Refine the directory, Twin conversation, citations, and artifact-inspection experience using Shadcn UI primitives.
