@@ -27,6 +27,9 @@ We strictly use the following stack. Do not introduce alternative frameworks:
   - The `master` (or `main`) branch is STRICTLY reserved for stable production-ready code.
   - The `develop` branch is our primary active development workspace. All new feature branches (`feature/xxx`) must branch off from `develop` and must be merged back into `develop` upon successful completion.
   - Never commit directly to `master`.
+  - Before rebasing a feature branch, switch to `develop` and run `git pull origin develop`; then switch back to the feature branch and rebase it onto the updated local `develop` branch.
+  - Use local rebase to incorporate `develop` into feature branches; merge pull requests into `develop` on GitHub using merge commits.
+  - If rebasing a previously pushed branch requires `git push --force-with-lease`, obtain explicit user approval before running that command.
 * **Automated Pull Request Workflow**:
   - Every time a sub-task or feature branch is completed, the Agent must automatically push the branch to GitHub (`origin/feature/xxx`).
   - The Agent must programmatically generate a comprehensive, highly professional English PR description directed at the `develop` branch.
