@@ -2,6 +2,12 @@
 
 > An AI-powered organizational memory SaaS that creates an evidence-backed Work Twin for every employee from the work they actually do.
 
+## 🎬 Hackathon Demo
+
+[![Watch the WorkTwin demo](docs/assets/worktwin-demo-thumbnail.png)](https://youtu.be/1_yStyEEEJU)
+
+Watch the 90-second product demo: [WorkTwin on YouTube](https://youtu.be/1_yStyEEEJU)
+
 ## 🌟 Vision
 
 Organizations lose valuable knowledge every time an employee changes roles or leaves the company.
