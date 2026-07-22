@@ -109,6 +109,13 @@ function App() {
                     {message.historical && <p className="mb-2 text-xs font-semibold text-amber-300">Historical evidence-based representation</p>}<ReactMarkdown>{message.content}</ReactMarkdown>
                   </div>{message.author === 'user' && <UserRound size={20} className="mt-2 shrink-0 text-slate-500" />}
                 </article>)}
+                {isAsking && <article className="flex gap-3" role="status" aria-live="polite" aria-label={`${selectedTwin.display_name} is typing`}>
+                  <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-semibold ${twinAvatarColor(selectedTwin)}`}>{twinInitials(selectedTwin)}</span>
+                  <div className="flex items-center gap-2 rounded-2xl bg-slate-800 px-4 py-3 text-sm text-slate-300">
+                    <span>{selectedTwin.display_name.split(' ')[0]} is reviewing the evidence</span>
+                    <span className="flex gap-1" aria-hidden="true"><span className="typing-dot" /><span className="typing-dot [animation-delay:150ms]" /><span className="typing-dot [animation-delay:300ms]" /></span>
+                  </div>
+                </article>}
               </div>
               <form onSubmit={askTwin} className="mt-4 shrink-0 border-t border-slate-800 bg-slate-950 pt-4">
                 {queryError && <p role="alert" className="mb-3 rounded-lg bg-rose-500/10 px-3 py-2 text-sm text-rose-300">{queryError}</p>}
