@@ -49,5 +49,5 @@
 - [x] Prepare and verify a stable end-to-end demo story: departed Twin, cited evidence, and implementation plan.
 - [x] Fix the chat viewport layout so long conversations scroll independently while the prompt composer remains visible.
 - [x] Add a demo data-source/onboarding view explaining the planned Slack, GitHub, and email OAuth/webhook connection flow.
-- [ ] Create submission-ready README materials, screenshots, and a short backup demo recording.
+- [x] Create submission-ready README materials, screenshots, and a short backup demo recording.
 - [x] Run final backend tests, frontend production build, and deployed smoke tests.
