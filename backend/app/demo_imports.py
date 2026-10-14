@@ -7,7 +7,7 @@ from typing import Any
 
 import httpx
 
-from app.config import get_settings
+from app.core.config import get_settings
 
 
 ALLOWED_ACCESS_SCOPES = {"company_shared", "restricted"}
