@@ -56,11 +56,13 @@
 
 Specification: [`docs/specs/gmail-oauth-connector.md`](docs/specs/gmail-oauth-connector.md)
 
-- [ ] Approve mailbox-selection policy and establish authenticated, authorized organization-actor context for connector routes.
+- [x] Approve mailbox-selection policy: synchronize only messages with one administrator-selected existing Gmail label; retain the `restricted` default.
+- [ ] Establish authenticated, authorized organization-actor context for connector routes.
 - [ ] Register the Google OAuth application; configure consent screen, Gmail readonly scope, approved redirect URIs, and server-side environment secrets.
 - [ ] Create migrations for OAuth connections, one-time authorization states, sync checkpoints, and connector audit events.
 - [ ] Implement encrypted token persistence, authorization-state validation, token refresh, sanitized connection status, and disconnect/revocation behavior.
 - [ ] Implement Gmail authorization, callback, status, manual-sync, and disconnect API routes.
+- [ ] Implement selected-Gmail-label discovery, validation, persistence, and configuration UI; block sync until a label is selected.
 - [ ] Implement Gmail API client and idempotent message/thread normalization into `work_artifacts`, preserving source identity, provenance, and restricted-by-default access scope.
 - [ ] Integrate successful email ingestion with the existing embedding and derived-profile refresh workflow without changing its contract.
 - [ ] Build the Connect Gmail, connection status, manual sync, error, and Disconnect frontend experience.
