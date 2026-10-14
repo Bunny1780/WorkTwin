@@ -3,7 +3,8 @@ from types import SimpleNamespace
 from uuid import UUID
 
 from app.artifact_embeddings import EMBEDDING_DIMENSIONS, EMBEDDING_MODEL
-from app.twin_queries import TwinQueryRequest, TwinQueryService
+from app.schemas.twins import TwinQueryRequest
+from app.services.twin_queries import TwinQueryService
 
 
 class FakeRepository:
