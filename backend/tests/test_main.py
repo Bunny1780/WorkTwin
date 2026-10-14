@@ -2,9 +2,10 @@ from types import SimpleNamespace
 
 from fastapi.testclient import TestClient
 
-from app.agents import AgentProfile, AgentProfileCreate, AgentProfileUpdate, get_agents_repository
-from app.config import get_settings
-from app.main import app, get_openai_client
+from app.api.dependencies import get_agents_repository, get_openai_client, get_optional_agents_repository
+from app.core.config import get_settings
+from app.main import app, create_app
+from app.schemas.agents import AgentProfile, AgentProfileCreate, AgentProfileUpdate
 
 
 class FakeCompletions:
@@ -65,6 +66,8 @@ def test_health_does_not_expose_key(monkeypatch):
 def test_chat_uses_official_sdk_interface(monkeypatch):
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
     monkeypatch.setenv("OPENAI_MODEL", "test-model")
+    monkeypatch.delenv("SUPABASE_URL", raising=False)
+    monkeypatch.delenv("SUPABASE_SERVICE_ROLE_KEY", raising=False)
     get_settings.cache_clear()
     app.dependency_overrides[get_openai_client] = lambda: FakeOpenAIClient()
 
@@ -82,8 +85,11 @@ def test_chat_uses_official_sdk_interface(monkeypatch):
     }
 
 
-def test_frontend_origin_can_call_chat_api():
-    response = TestClient(app).options(
+def test_frontend_origin_can_call_chat_api(monkeypatch):
+    monkeypatch.setenv("CORS_ORIGINS", "http://localhost:5173")
+    get_settings.cache_clear()
+    test_app = create_app()
+    response = TestClient(test_app).options(
         "/api/chat",
         headers={
             "Origin": "http://localhost:5173",
@@ -93,6 +99,7 @@ def test_frontend_origin_can_call_chat_api():
 
     assert response.status_code == 200
     assert response.headers["access-control-allow-origin"] == "http://localhost:5173"
+    get_settings.cache_clear()
 
 
 def test_agent_profiles_can_be_created_listed_and_updated():
@@ -133,7 +140,7 @@ def test_chat_uses_selected_agent_profile(monkeypatch):
     monkeypatch.setenv("OPENAI_MODEL", "test-model")
     get_settings.cache_clear()
     app.dependency_overrides[get_openai_client] = lambda: FakeOpenAIClient()
-    monkeypatch.setattr("app.main.get_agents_repository", lambda settings: repository)
+    app.dependency_overrides[get_optional_agents_repository] = lambda: repository
 
     try:
         response = TestClient(app).post(
