@@ -51,3 +51,19 @@
 - [x] Add a demo data-source/onboarding view explaining the planned Slack, GitHub, and email OAuth/webhook connection flow.
 - [x] Create submission-ready README materials, screenshots, and a short backup demo recording.
 - [x] Run final backend tests, frontend production build, and deployed smoke tests.
+
+## Phase 9: Gmail OAuth Connector (Planned)
+
+Specification: [`docs/specs/gmail-oauth-connector.md`](docs/specs/gmail-oauth-connector.md)
+
+- [ ] Approve mailbox-selection policy and establish authenticated, authorized organization-actor context for connector routes.
+- [ ] Register the Google OAuth application; configure consent screen, Gmail readonly scope, approved redirect URIs, and server-side environment secrets.
+- [ ] Create migrations for OAuth connections, one-time authorization states, sync checkpoints, and connector audit events.
+- [ ] Implement encrypted token persistence, authorization-state validation, token refresh, sanitized connection status, and disconnect/revocation behavior.
+- [ ] Implement Gmail authorization, callback, status, manual-sync, and disconnect API routes.
+- [ ] Implement Gmail API client and idempotent message/thread normalization into `work_artifacts`, preserving source identity, provenance, and restricted-by-default access scope.
+- [ ] Integrate successful email ingestion with the existing embedding and derived-profile refresh workflow without changing its contract.
+- [ ] Build the Connect Gmail, connection status, manual sync, error, and Disconnect frontend experience.
+- [ ] Add unit tests for state validation, refresh, normalization, deduplication, and access-scope rules.
+- [ ] Add integration and end-to-end tests for connect, callback, sync, restricted retrieval, and disconnect flows.
+- [ ] Run backend tests, frontend tests/build, security review, and deployed OAuth smoke test; then mark this phase complete.
